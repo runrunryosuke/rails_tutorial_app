@@ -1,0 +1,32 @@
+# Ignore bundler config.
+/.bundle
+
+# Ignore all logfiles and tempfiles.
+/log/*
+!/log/.keep
+/tmp
+/*.log
+
+# Ignore other unneeded files.
+*~
+*.dump
+*.swp
+
+.DS_Store
+.project
+.pryrc
+.rbenv-gemsets
+.rspec
+.sass-cache
+
+/coverage/
+/nbproject/
+/spec/examples.txt
+/vendor/bundle
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
