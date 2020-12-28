@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+  app: &app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      args:
+        RUBY_VERSION: '2.7.2-alpine'
+        BUNDLER_VERSION: '2.2.0'
+    image: demo:1.0.0
+    stdin_open: true
+    tty: true
+    command: bundle exec rails server -b 0.0.0.0
+    volumes:
+      - .:/app:cached
+      - rails_cache:/app/tmp/cache
+      - bundle:/bundle
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+    environment:
+      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
+      - WEBPACKER_DEV_SERVER_HOST=webpacker
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    ports:
+      - '3000:3000'
+    tmpfs:
+      - /tmp
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./containers/db:/etc/mysql/conf.d/
+      - mysql:/var/lib/mysql
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    ports:
+      - 3306
+
+  webpacker:
+    <<: *app
+    command: ./bin/webpack-dev-server
+    ports:
+      - '3035:3035'
+    volumes:
+      - .:/app:cached
+      - bundle:/bundle
+      - node_modules:/app/node_modules
+      - packs:/app/public/packs
+    environment:
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+
+volumes:
+  mysql:
+  bundle:
+  node_modules:
+  rails_cache:
+  packs:
